@@ -1,16 +1,14 @@
 fastapi==0.110.0
 uvicorn==0.27.0
-langchain==0.1.0
-langchain-community==0.0.20
-langchain-core==0.1.0
-langchain-openai==0.0.5
+langchain==1.2.0
+langchain-community==0.4.1
+langchain-core==1.2.6
+langchain-openai==0.1.7
 langchain-ollama==0.1.0
-langchain-text-splitters==0.0.1
+langchain-text-splitters==0.2.0
 chromadb==0.4.24
 sentence-transformers==2.3.1
 pymupdf==1.23.21
 torch==2.4.1 --index-url https://download.pytorch.org/whl/cpu
 torchvision==0.19.1 --index-url https://download.pytorch.org/whl/cpu
 torchaudio==2.4.1 --index-url https://download.pytorch.org/whl/cpu
-pydantic==2.6.0
-typing-extensions==4.9.0
