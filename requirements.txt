@@ -1,15 +1,15 @@
-fastapi==0.110.0
-uvicorn==0.27.0
+fastapi
+uvicorn
 langchain
 langchain-community
 langchain-core
 langchain-ollama
 langchain-text-splitters
-chromadb==0.4.24
-sentence-transformers==2.3.1
-pymupdf==1.23.21
-torch==2.4.1 --index-url https://download.pytorch.org/whl/cpu
-torchvision==0.19.1 --index-url https://download.pytorch.org/whl/cpu
-torchaudio==2.4.1 --index-url https://download.pytorch.org/whl/cpu
-pydantic==2.6.0
-typing-extensions==4.9.0
+chromadb
+sentence-transformers
+pymupdf
+torch --index-url https://download.pytorch.org/whl/cpu
+torchvision= --index-url https://download.pytorch.org/whl/cpu
+torchaudio= --index-url https://download.pytorch.org/whl/cpu
+pydantic
+typing-extensions
