@@ -1,0 +1,60 @@
+#!/bin/bash
+
+# setup.sh - Install virtual environment and all dependencies for Charaka Samhita RAG project
+
+set -e  # Exit on any error
+
+echo "=================================="
+echo "Charaka Samhita AI Project Setup"
+echo "=================================="
+
+# Check if Python 3.11 is available
+if ! command -v python3.11 &> /dev/null; then
+    echo "ERROR: Python 3.11 is required but not found."
+    echo "Please install Python 3.11 first."
+    exit 1
+fi
+
+# Create virtual environment
+echo "Creating virtual environment 'ayur-venv' using Python 3.11..."
+python3.11 -m venv ayur-venv
+
+# Activate virtual environment
+echo "Activating virtual environment..."
+source ayur-venv/bin/activate
+
+# Upgrade pip
+echo "Upgrading pip..."
+pip install --upgrade pip
+
+# Install all required packages
+echo "Installing required Python packages..."
+pip install \
+    fastapi \
+    uvicorn \
+    langchain \
+    langchain-community \
+    langchain-core \
+    langchain-ollama \
+    langchain-text-splitters \
+    chromadb \
+    sentence-transformers \
+    langchain_classic \
+    pydantic \
+    typing-extensions
+
+echo ""
+echo "=================================="
+echo "Setup Complete!"
+echo "=================================="
+echo ""
+echo "To activate the environment in the future, run:"
+echo "    source ayur-venv/bin/activate"
+echo ""
+echo "To run your API:"
+echo "    uvicorn api.py:app --reload --host 0.0.0.0 --port 8000"
+echo ""
+echo "Make sure you have Ollama installed and pulled your model:"
+echo "    ollama pull gemma2:2b"
+echo ""
+echo "Enjoy your Charaka Samhita AI Assistant! 🌿"
