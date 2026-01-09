@@ -1,10 +1,9 @@
-# api.py - Final Working Charaka Samhita RAG API with WebSocket Streaming
+# main.py - Charaka Samhita RAG API with WebSocket Streaming
 
 import os
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
-from pydantic import BaseModel
 from typing import List
 from operator import itemgetter
 import json
@@ -12,11 +11,11 @@ import json
 from langchain_core.runnables import RunnableParallel, RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import PromptTemplate
-from langchain_ollama import ChatOllama
+# from langchain_ollama import ChatOllama
+from langchain_openai import ChatOpenAI
 from langchain_community.vectorstores import Chroma
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_openai import ChatOpenAI
 
 # ===========================
 # CONFIG
@@ -24,8 +23,8 @@ from langchain_openai import ChatOpenAI
 JSONL_FILE = "charaka_clean-v1.jsonl"
 DB_DIR = "chroma_charaka"
 COLLECTION_NAME = "charaka"
-K = 10  # Reduced for faster response
-MODEL = "gemma2:2b"  # or "phi3:mini"
+K = int(os.getenv('TOKEN_LIMIT',5))
+MODEL = "phi3:mini"  # Change to "phi3:mini" if gemma2 is too heavy
 
 # ===========================
 # Build DB once if not exists
@@ -65,21 +64,42 @@ vectordb = Chroma(persist_directory=DB_DIR, embedding_function=embeddings, colle
 retriever = vectordb.as_retriever(search_kwargs={"k": K})
 
 # LLM & Prompt
-llm = ChatOllama(model=MODEL, temperature=0.1, num_predict=1024)
+# llm = ChatOllama(model=MODEL, temperature=0.1, num_predict=1024)
+# llm = ChatOllama(
+#     model=MODEL,
+#     base_url="https://open-webui-production-4562.up.railway.app",  # Remote Ollama URL
+#     temperature=0.1,
+# )
+# https://openrouter.ai/settings/keys
 
+openAI_model=os.getenv('OPEN_AI_MODEL', 'meta-llama/llama-3.2-3b-instruct:free')
+openAI_base_url=os.getenv('OPEN_AI_BASE_URL', 'https://openrouter.ai/api/v1')
+openAI_api_key=os.getenv('OPEN_AI_KEY')
+openAI_temperature=float(os.getenv('OPEN_AI_TEMPERATURE', 0.1))
+
+print(f'openAI_model: {openAI_model}')
+print(f'openAI_base_url: {openAI_base_url}')
+print(f'openAI_api_key: {openAI_api_key}')
+print(f'openAI_temperature: {openAI_temperature}')
+print(f'K: {K}')
+llm = ChatOpenAI(
+    model=openAI_model,
+    base_url="https://openrouter.ai/api/v1",
+    api_key=openAI_api_key,  # Add as Railway secret
+    temperature=openAI_temperature
+)
 prompt = PromptTemplate.from_template(
-    """YYou are an expert Ayurvedic scholar deeply knowledgeable in Charaka Samhita.
+    """You are an expert Ayurvedic scholar deeply knowledgeable in Charaka Samhita.
 Answer thoroughly using only the provided context.
 
 CRITICAL RULES - MUST FOLLOW STRICTLY:
-- Include brief about asked question regerancing the provided context
+- Include a brief introduction referencing the provided context
 - NEVER repeat sentences, paragraphs, or ideas — say each thing only once
 - Do NOT summarize or rephrase the same information multiple times
-- Do NOT repeat the introduction, principles, or key points
 - Be concise yet complete — no redundancy
 - Use **bold** for headings, *italics* for Sanskrit terms, bullet points for lists
 - Always put two blank lines between sections
-- include process to create medicine when required
+- Include process to create medicine when required
 
 Context:
 {context}

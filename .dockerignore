@@ -1,0 +1,31 @@
+# Ignore Git and version control
+.git
+.gitignore
+
+# Ignore Python caches and envs
+__pycache__
+*.pyc
+*.pyo
+.venv
+venv
+env
+my-venv
+my-env
+
+# Ignore large data/assets (customize based on your dir)
+data/
+models/
+datasets/
+logs/
+backups/
+*.tmp
+*.bak
+
+# Ignore IDE/editor files
+.vscode/
+.idea/
+*.swp
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
